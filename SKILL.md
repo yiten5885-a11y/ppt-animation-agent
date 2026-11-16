@@ -7,8 +7,8 @@ display_name: "PPT动画智能体"
 display_name_en: "PPT Animation Agent"
 description_zh: "当用户要做动画PPT、从讲稿生成PPT、美化PPT、给已有PPTX加动画、做PPT模板、做公式图表3D页、导出质检交片时使用：先读PPT动画上下文（讲稿/受众/页数/风格/动画基调/素材/交付/质检/沉淀/合规），再按意图分流到稳稿、动画、版式、图形、导出、插图六个模块。做动画PPT、四条路线、18库动画能力、先稳稿后动画、每页有图。"
 description_en: "Use when the user wants an animated PPT, a deck generated from a script, a prettier deck, animations added to an existing PPTX, a PPT template, formula/chart/3D pages, or export, QA and delivery: first read the PPT animation context (script, audience, page count, style, animation tone, assets, delivery, QA, learnings, compliance), then route by intent to six modules — drafting, animation, layout, graphics, export, illustration. Animated PPTs, four routes, animation power from 18 libraries, draft first, animate second, every page has a visual."
-version: 1.1.0
-summary: "从讲稿生成动画PPT、美化PPT、给已有PPTX加动画、做PPT模板。先稳稿后动画，每页有动画、每页有图、全套有切换，验收器重读成品文件才放行。"
+version: 1.2.0
+summary: "从讲稿生成动画PPT、美化PPT、给已有PPTX加动画、做PPT模板。先稳稿后动画，每页有动画、每页有图、全套有切换，折线图从左端向右端延长画出，验收器重读成品文件才放行。"
 license: MIT
 author: yiten5885-a11y
 category: 办公效率
@@ -126,7 +126,7 @@ iconUrl: https://raw.githubusercontent.com/yiten5885-a11y/ppt-animation-agent/ma
 - **A 稳稿底座（wengao-ppt）：契约＋precheck＋独立验收器。** 本地优先、确定性契约的 PPTX 生成与美化引擎；流程 precheck → run → validate → publish → export；独立验收器对磁盘落盘产物物理重读验证，绝不采信生成器自报；未通过硬性质量门禁绝不静默放行。
 - **B 动画系统：** 时间线与错峰、进入与强调动画、触发器、弹簧与补间、数字滚动、粒子背景，把 18 个动画库的招式对应到 PPT 原生动画与视频、GIF 素材。
 - **C 页面与版式：** 版式、品牌工作区、187 种 Office 形状、配色与字体、封面目录结尾的排版方法。
-- **D 图形与公式：** 公式一步步写出来、图表生长、3D 产品展示、矢量图解的做法与导出方法。
+- **D 图形与公式：** 公式一步步写出来、图表生长、折线图从左端向右端延长画出、3D 产品展示、矢量图解的做法与导出方法。
 - **E 导出与交付：** .pptx 动画注入、HTML 演示稿、Remotion 视频导出、GIF 导出、逐项质检清单与交付说明。
 - **F 插图系统：** 每页配图规则、结构示意图谱（链表、栈、队列、树、图、流程图、对比、时间线）、程序画图、数据图、封面装饰、图库与 AI 生图取用规则。程序画图首选，不用接 API；纯文字页不许交付。
 
@@ -162,7 +162,8 @@ iconUrl: https://raw.githubusercontent.com/yiten5885-a11y/ppt-animation-agent/ma
 
 ## 版本与更新
 
-- 本包当前版本 v1.1.0，版本号写在 README 标题里。
+- 本包当前版本 v1.2.0，版本号写在 README 标题里。
+- v1.2.0（2026-11-15）：折线图画线动画。用户要求：折线从一端动画式延长到另一端。改动：模块 D 第六节新增 6.2（擦除，自左侧，按系列，全线 1–2 秒，拐点停顿，标签最后出），模块 B 新增 1.5 擦除画线小节，模块 F 图表动画加 cross-ref；擦除的 presetID 以实机导出核对为准（需核实）。
 - v1.1.0（2026-11-15）：新增模块 F 插图系统。用户验收反馈：24 页讲义零插图、画面空。改动：每页至少 1 个视觉元素、封面必须有图、结构示意图程序画（不用接 API）、视觉必检进质检清单；路线一、二、四加入 F，模板每种页型留好图位。
 - 每次改动先记在底座第 9 节，再升版本号，不要先升版本后补记录。
 - 用户反馈的问题，修一处记一处，修完按模块 E 重新质检受影响的页面。
