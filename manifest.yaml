@@ -1,6 +1,6 @@
 name: ppt-animation-agent
 slug: ppt-animation-agent
-version: 1.3.1
+version: 1.3.2
 display_name: PPT动画智能体
 description: 当用户要做动画PPT、从讲稿生成PPT、美化PPT、给已有PPTX加动画、做PPT模板、做公式图表3D页、导出质检交片时使用：先读PPT动画上下文（讲稿/受众/页数/风格/动画基调/素材/交付/质检/沉淀/合规），再按意图分流到稳稿、动画、版式、图形、导出、插图六个模块。做动画PPT、四条路线、18库动画能力、先稳稿后动画、每页有图、默认自动播放。
 author: yiten5885-a11y
