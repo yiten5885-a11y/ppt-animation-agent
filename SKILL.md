@@ -13,6 +13,8 @@ license: MIT
 author: yiten5885-a11y
 category: 办公效率
 tags: [PPT, 动画PPT, 演示文稿, 办公效率, 模板]
+homepage: https://github.com/yiten5885-a11y/ppt-animation-agent
+iconUrl: https://raw.githubusercontent.com/yiten5885-a11y/ppt-animation-agent/main/cover.png
 ---
 
 # PPT动画智能体

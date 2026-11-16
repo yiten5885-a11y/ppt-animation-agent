@@ -13,3 +13,6 @@ tags: &id001
 - 模板
 triggers: *id001
 license: MIT
+homepage: https://github.com/yiten5885-a11y/ppt-animation-agent
+repository: https://github.com/yiten5885-a11y/ppt-animation-agent
+iconUrl: https://raw.githubusercontent.com/yiten5885-a11y/ppt-animation-agent/main/cover.png
