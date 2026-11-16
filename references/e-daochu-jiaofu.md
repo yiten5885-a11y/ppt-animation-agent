@@ -23,6 +23,44 @@ python-pptx 这个库本身没有加动画的接口。不要假装它自带动�
 5. **实机播放检查。** 把文件拿到 PowerPoint 或 WPS 里，打开放映模式，从头到尾实际播放一遍。只在代码里看 XML 不算检查通过，必须亲眼看到动画按清单动起来。
 6. **修一处，重新播一遍。** 播放中发现任何一处动画不对，只修那一处，修完从那一页重新播放验证，不要只改不验。
 
+### 核对命令（必跑）：成品有没有动画，一条命令说了算
+
+动画注入完、实机播放之前，先跑一遍核对命令，不要只凭“看着有动画”就交付：
+
+```python
+# 存成 check_anim.py，用法：python3 check_anim.py 文件.pptx
+# 每页内容页必须有 p:timing，第一组动画随翻页自动开始（nodeType=withPrevious）；
+# 零动画，或第一组要点一下才开始，都算 FAIL。
+import zipfile, re, sys
+from lxml import etree
+P = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+def q(ns, t): return '{%s}%s' % (ns, t)
+f = sys.argv[1]
+z = zipfile.ZipFile(f)
+bad = []
+pages = []
+for name in z.namelist():
+    m = re.match(r'ppt/slides/slide(\d+)\.xml$', name)
+    if m:
+        pages.append((int(m.group(1)), name))
+for pg, name in sorted(pages):
+    root = etree.fromstring(z.read(name))
+    effs = [c for c in root.iter(q(P, 'cTn')) if c.get('presetID')]
+    if not effs:
+        bad.append((pg, '零动画'))
+    elif effs[0].get('nodeType') != 'withPrevious':
+        bad.append((pg, '要点一下才开始播'))
+print(f'共 {len(pages)} 页')
+if bad:
+    print('FAIL：', bad)
+else:
+    print('PASS：每页都随翻页自动播放入场动画')
+```
+
+- 跑命令只需要 lxml（装了 python-pptx 的环境里自带）。
+- 输出 PASS 才往下走（实机播放、交付说明）；输出 FAIL，FAIL 的页回去补注入，修完重新跑，PASS 了再往下走。
+- **平台一键生成的静态稿只能当草稿：** 平台自带的一键生成只出静态页加切换，不写 p:timing，交出去就是零动画（2026-11-16 实测：26 页经营总结，时间线全空）。静态稿生成完，必须走本模块注入时间线、跑核对命令，PASS 了才是成品，不要把静态稿直接交付。
+
 ### 注意事项
 
 - 动画注入只改时间线，不要动静态页面的文字与版式。页面内容有问题，回到模块 A、模块 C 去改，不要在注入这一步顺手改内容。
@@ -131,7 +169,7 @@ python-pptx 这个库本身没有加动画的接口。不要假装它自带动�
 
 ### 动画必检（单列，逐项核对）
 
-- [ ] 每页内容页至少 1 组动画：每一页有正文内容的页面，至少有一组进入动画或强调动画，没有动画的空白页不算过关。
+- [ ] 每页内容页至少 1 组动画：每一页有正文内容的页面，至少有一组进入动画或强调动画，没有动画的空白页不算过关（跑动画核对命令验证）。
 - [ ] 动画默认自动连播：翻到一页不用点就自己播，第一组随翻页自动开始，其余组自动衔接；全页点击触发不通过，验收器重读 p:timing 统计 nodeType。
 - [ ] 全 deck 至少 1 种切换：整份 PPT 至少有一种页面切换效果，切换方式全 deck 统一，不用每页换一种。
 - [ ] 时间线先快后慢可调：动画的节奏是先快后慢，时间线上的时长、延迟都能调，改一个数字就能改节奏，不用重做整页。

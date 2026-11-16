@@ -7,8 +7,8 @@ display_name: "PPT动画智能体"
 display_name_en: "PPT Animation Agent"
 description_zh: "当用户要做动画PPT、从讲稿生成PPT、美化PPT、给已有PPTX加动画、做PPT模板、做公式图表3D页、导出质检交片时使用：先读PPT动画上下文（讲稿/受众/页数/风格/动画基调/素材/交付/质检/沉淀/合规），再按意图分流到稳稿、动画、版式、图形、导出、插图六个模块。做动画PPT、四条路线、18库动画能力、先稳稿后动画、每页有图、默认自动播放。"
 description_en: "Use when the user wants an animated PPT, a deck generated from a script, a prettier deck, animations added to an existing PPTX, a PPT template, formula/chart/3D pages, or export, QA and delivery: first read the PPT animation context (script, audience, page count, style, animation tone, assets, delivery, QA, learnings, compliance), then route by intent to six modules — drafting, animation, layout, graphics, export, illustration. Animated PPTs, four routes, animation power from 18 libraries, draft first, animate second, every page has a visual, auto-play by default."
-version: 1.3.0
-summary: "从讲稿生成动画PPT、美化PPT、给已有PPTX加动画、做PPT模板。先稳稿后动画，每页有动画、每页有图、全套有切换、动画默认自动连播，折线图从左端向右端延长画出，版式防呆四条进质检，验收器重读成品文件才放行。"
+version: 1.3.1
+summary: "从讲稿生成动画PPT、美化PPT、给已有PPTX加动画、做PPT模板。先稳稿后动画，每页有动画、每页有图、全套有切换、动画默认自动连播，折线图从左端向右端延长画出，版式防呆四条进质检，交付前跑动画核对命令，验收器重读成品文件才放行。"
 license: MIT
 author: yiten5885-a11y
 category: 办公效率
@@ -57,6 +57,7 @@ iconUrl: https://raw.githubusercontent.com/yiten5885-a11y/ppt-animation-agent/ma
 
 - 用户给讲稿或一句话主题，从零生成一整份 PPTX。
 - 走 A 定稿 → C 排版式 → F 配插图 → B 加动画 → E 导出质检。
+- 加完动画必须注入 p:timing、跑动画核对命令（见“动画核对命令”一节），PASS 才许交付；平台一键生成的静态稿只能当草稿，不能直接交付——它只出静态页加切换，不写 p:timing，交出去就是零动画。
 - 生成前先确认讲稿、页数、风格三件事，缺一件先问用户，不要猜着生成。
 
 ### 路线二：美化
@@ -132,7 +133,7 @@ iconUrl: https://raw.githubusercontent.com/yiten5885-a11y/ppt-animation-agent/ma
 
 ## 硬规则（每次执行都遵守）
 
-1. **产出一定是动画 PPT：** 每页内容页至少 1 组动画、至少 1 个视觉元素（图片、原生图表、形状示意图组、视频或 GIF 之一），全 deck 至少 1 种切换、时间线先快后慢可调，验收不过不许说“好了”。动画默认自动连播：翻到一页就自己播，不用点；只有讲者要控节奏的地方才用点击触发；全页点击触发验收不通过（网页版播放器常不播点击触发的动画，全点击等于没有动画）。
+1. **产出一定是动画 PPT：** 每页内容页至少 1 组动画、至少 1 个视觉元素（图片、原生图表、形状示意图组、视频或 GIF 之一），全 deck 至少 1 种切换、时间线先快后慢可调，验收不过不许说“好了”。动画默认自动连播：翻到一页就自己播，不用点；只有讲者要控节奏的地方才用点击触发；全页点击触发验收不通过（网页版播放器常不播点击触发的动画，全点击等于没有动画）。交付前跑动画核对命令，FAIL 不许交付。
 2. **先稳稿后动画：** 稿子不定型不许动动画；讲稿、页数、结构没定，先回模块 A 定稿。
 3. **诚实：** python-pptx 不支持直接加动画，靠注入 p:timing 时间线，必须在 PowerPoint、WPS 里实际播放检查；没有实机播放证据，不说动画做好了。
 4. **不确定的一律写“需核实”：** 版本要求、价格、额度、开通条件、模型参数凡未核实的，一律写“需核实”，并告诉用户去哪里核实（README 工具地址总表）。
@@ -151,11 +152,50 @@ iconUrl: https://raw.githubusercontent.com/yiten5885-a11y/ppt-animation-agent/ma
 - 数据、引用先确认来源，来源写进交付说明，数字改过的地方要有据可查。
 - 第三方平台（字体库、素材站、云服务）的价格与额度以官网为准，本包不代收、不承诺。
 
+## 动画核对命令（每次交付前必跑）
+
+下面的命令检查一份 .pptx 每页有没有自动播放入场动画。把它存成 check_anim.py，交付前跑一遍：
+
+```python
+"""用法：python3 check_anim.py 文件.pptx
+每页内容页必须有 p:timing，第一组动画随翻页自动开始（nodeType=withPrevious）；
+零动画，或第一组要点一下才开始，都算 FAIL。"""
+import zipfile, re, sys
+from lxml import etree
+P = 'http://schemas.openxmlformats.org/presentationml/2006/main'
+def q(ns, t): return '{%s}%s' % (ns, t)
+f = sys.argv[1]
+z = zipfile.ZipFile(f)
+bad = []
+pages = []
+for name in z.namelist():
+    m = re.match(r'ppt/slides/slide(\d+)\.xml$', name)
+    if m:
+        pages.append((int(m.group(1)), name))
+for pg, name in sorted(pages):
+    root = etree.fromstring(z.read(name))
+    effs = [c for c in root.iter(q(P, 'cTn')) if c.get('presetID')]
+    if not effs:
+        bad.append((pg, '零动画'))
+    elif effs[0].get('nodeType') != 'withPrevious':
+        bad.append((pg, '要点一下才开始播'))
+print(f'共 {len(pages)} 页')
+if bad:
+    print('FAIL：', bad)
+else:
+    print('PASS：每页都随翻页自动播放入场动画')
+```
+
+- 跑命令只需要 lxml（装了 python-pptx 的环境里自带）。
+- 输出 PASS 才许交付；输出 FAIL，FAIL 的页列出来，回去补注入（模块 B 1.6、模块 E E1），修完重新跑，PASS 了再交付。
+- 只看静态页、只数切换，不算核对过：切换不是动画，有切换没入场动画，照样是零动画。
+
 ## 交付前自查（每次交付前过一遍）
 
 - 稿子定了吗？没定先回模块 A。
 - 每页内容页至少 1 组动画了吗？每页至少 1 个视觉元素了吗？封面有图了吗？纯文字页清零了吗？
 - 动画是自动连播吗？翻到一页不用点就自己播了吗？全页点击触发的页清零了吗？
+- 动画核对命令跑过了吗？输出 PASS 了吗？FAIL 的页修完复检了吗？
 - 对比度、空白占位、装饰盖字、竖条内收、甘特条带字，五项都查了吗？
 - 全 deck 至少 1 种切换了吗？
 - 在 PowerPoint 或 WPS 里实际放映检查过了吗？
@@ -165,7 +205,8 @@ iconUrl: https://raw.githubusercontent.com/yiten5885-a11y/ppt-animation-agent/ma
 
 ## 版本与更新
 
-- 本包当前版本 v1.3.0，版本号写在 README 标题里。
+- 本包当前版本 v1.3.1，版本号写在 README 标题里。
+- v1.3.1（2026-11-16）：动画核对命令。用户用 v1.3.0 在 WorkBuddy 里生成 26 页经营总结，交付时还是零动画——生成那一步跳过了 p:timing 注入，v1.3.0 的规则只管触发方式、管不住跳过注入本身。改动：新增动画核对命令（每页必须有 p:timing、第一组 withPrevious，零动画或第一组要点一下才开始都算 FAIL），进 SKILL.md 新增一节、硬规则 1、路线一收尾、交付前自查，模块 B 验收门加一行、模块 E E1 加核对命令小节与“平台一键生成的静态稿只能当草稿”一条；核对命令已在 4 份真文件上实测（经营总结 v1.0 FAIL 26 页、v1.1 PASS，星澜 v1.1 PASS，讲义 v1.0/v1.1 FAIL）。兜底：如果下一份在 WorkBuddy 里生成还是 FAIL，说明平台那边的生成器不写时间线，改走路线三（静态稿生成完、再按模块 B＋E 补注入、跑核对命令），不要反复在平台里重生成。
 - v1.3.0（2026-11-15）：自动播放＋版式防呆。用户验收反馈：24 页讲义动画全是点击触发、放映时不点就不动；星澜 26 页年会报告标题深色字压深底看不见、22 页空白芯片、卡片竖条伸出卡片外、青色圆盖住感谢语、甘特图光秃秃没内容。改动：动画默认自动连播（模块 B 新增 1.6，p:timing 触发方式映射表：第一组 withPrevious、其余 afterEffect 错峰，全 clickEffect 验收不通过；模块 B 验收门与模块 E 动画必检加自动播放必检），版式防呆四条进硬规则 11（模块 C 新增 4.5，模块 D 甘特条带字，模块 E 视觉必检加四项）；讲义文件本身未动，改自动播放只动了技能包。
 - v1.2.0（2026-11-15）：折线图画线动画。用户要求：折线从一端动画式延长到另一端。改动：模块 D 第六节新增 6.2（擦除，自左侧，按系列，全线 1–2 秒，拐点停顿，标签最后出），模块 B 新增 1.5 擦除画线小节，模块 F 图表动画加 cross-ref；擦除的 presetID 以实机导出核对为准（需核实）。
 - v1.1.0（2026-11-15）：新增模块 F 插图系统。用户验收反馈：24 页讲义零插图、画面空。改动：每页至少 1 个视觉元素、封面必须有图、结构示意图程序画（不用接 API）、视觉必检进质检清单；路线一、二、四加入 F，模板每种页型留好图位。
