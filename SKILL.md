@@ -1,14 +1,14 @@
 ---
 name: ppt-animation-agent
-description: "当用户要做动画PPT、从讲稿生成PPT、美化PPT、给已有PPTX加动画、做PPT模板、做公式图表3D页、导出质检交片时使用：先读PPT动画上下文（讲稿/受众/页数/风格/动画基调/素材/交付/质检/沉淀/合规），再按意图分流到稳稿、动画、版式、图形、导出、插图六个模块。做动画PPT、四条路线、18库动画能力、先稳稿后动画、每页有图。"
+description: "当用户要做动画PPT、从讲稿生成PPT、美化PPT、给已有PPTX加动画、做PPT模板、做公式图表3D页、导出质检交片时使用：先读PPT动画上下文（讲稿/受众/页数/风格/动画基调/素材/交付/质检/沉淀/合规），再按意图分流到稳稿、动画、版式、图形、导出、插图六个模块。做动画PPT、四条路线、18库动画能力、先稳稿后动画、每页有图、默认自动播放。"
 slug: ppt-animation-agent
 displayName: PPT动画智能体
 display_name: "PPT动画智能体"
 display_name_en: "PPT Animation Agent"
-description_zh: "当用户要做动画PPT、从讲稿生成PPT、美化PPT、给已有PPTX加动画、做PPT模板、做公式图表3D页、导出质检交片时使用：先读PPT动画上下文（讲稿/受众/页数/风格/动画基调/素材/交付/质检/沉淀/合规），再按意图分流到稳稿、动画、版式、图形、导出、插图六个模块。做动画PPT、四条路线、18库动画能力、先稳稿后动画、每页有图。"
-description_en: "Use when the user wants an animated PPT, a deck generated from a script, a prettier deck, animations added to an existing PPTX, a PPT template, formula/chart/3D pages, or export, QA and delivery: first read the PPT animation context (script, audience, page count, style, animation tone, assets, delivery, QA, learnings, compliance), then route by intent to six modules — drafting, animation, layout, graphics, export, illustration. Animated PPTs, four routes, animation power from 18 libraries, draft first, animate second, every page has a visual."
-version: 1.2.0
-summary: "从讲稿生成动画PPT、美化PPT、给已有PPTX加动画、做PPT模板。先稳稿后动画，每页有动画、每页有图、全套有切换，折线图从左端向右端延长画出，验收器重读成品文件才放行。"
+description_zh: "当用户要做动画PPT、从讲稿生成PPT、美化PPT、给已有PPTX加动画、做PPT模板、做公式图表3D页、导出质检交片时使用：先读PPT动画上下文（讲稿/受众/页数/风格/动画基调/素材/交付/质检/沉淀/合规），再按意图分流到稳稿、动画、版式、图形、导出、插图六个模块。做动画PPT、四条路线、18库动画能力、先稳稿后动画、每页有图、默认自动播放。"
+description_en: "Use when the user wants an animated PPT, a deck generated from a script, a prettier deck, animations added to an existing PPTX, a PPT template, formula/chart/3D pages, or export, QA and delivery: first read the PPT animation context (script, audience, page count, style, animation tone, assets, delivery, QA, learnings, compliance), then route by intent to six modules — drafting, animation, layout, graphics, export, illustration. Animated PPTs, four routes, animation power from 18 libraries, draft first, animate second, every page has a visual, auto-play by default."
+version: 1.3.0
+summary: "从讲稿生成动画PPT、美化PPT、给已有PPTX加动画、做PPT模板。先稳稿后动画，每页有动画、每页有图、全套有切换、动画默认自动连播，折线图从左端向右端延长画出，版式防呆四条进质检，验收器重读成品文件才放行。"
 license: MIT
 author: yiten5885-a11y
 category: 办公效率
@@ -114,7 +114,7 @@ iconUrl: https://raw.githubusercontent.com/yiten5885-a11y/ppt-animation-agent/ma
 2. **受众与场合：** 给谁讲、在哪讲、线上还是线下、观众是什么背景。
 3. **页数与结构：** 多少页、怎么分章节、每章几页、封面目录结尾怎么安排。
 4. **风格与品牌：** 什么风格、主色、字体、标志放在哪、品牌工作区的要求；配图风格（几何装饰还是照片、示意图用什么配色）。
-5. **动画基调：** 动画是克制还是活泼、每页几组动画、切换用什么、触发器用在哪。
+5. **动画基调：** 动画是克制还是活泼、每页几组动画、切换用什么、触发器用在哪；触发方式默认自动播放（翻页即播，不用点），只有讲者要控节奏的地方才用点击触发，全页点击触发验收不通过。
 6. **素材清单：** 图片、视频、GIF、图表、字体都在哪、来源与许可是否齐全；每页配什么图（示意图、数据图、照片还是 AI 图）、图谁来画、从哪来。
 7. **交付形式：** 交 .pptx 还是 HTML 演示稿、要不要视频、文件大小有没有要求。
 8. **质检基线：** 交付前按模块 E 的清单逐项核对，通过标准是什么。
@@ -132,7 +132,7 @@ iconUrl: https://raw.githubusercontent.com/yiten5885-a11y/ppt-animation-agent/ma
 
 ## 硬规则（每次执行都遵守）
 
-1. **产出一定是动画 PPT：** 每页内容页至少 1 组动画、至少 1 个视觉元素（图片、原生图表、形状示意图组、视频或 GIF 之一），全 deck 至少 1 种切换、时间线先快后慢可调，验收不过不许说“好了”。
+1. **产出一定是动画 PPT：** 每页内容页至少 1 组动画、至少 1 个视觉元素（图片、原生图表、形状示意图组、视频或 GIF 之一），全 deck 至少 1 种切换、时间线先快后慢可调，验收不过不许说“好了”。动画默认自动连播：翻到一页就自己播，不用点；只有讲者要控节奏的地方才用点击触发；全页点击触发验收不通过（网页版播放器常不播点击触发的动画，全点击等于没有动画）。
 2. **先稳稿后动画：** 稿子不定型不许动动画；讲稿、页数、结构没定，先回模块 A 定稿。
 3. **诚实：** python-pptx 不支持直接加动画，靠注入 p:timing 时间线，必须在 PowerPoint、WPS 里实际播放检查；没有实机播放证据，不说动画做好了。
 4. **不确定的一律写“需核实”：** 版本要求、价格、额度、开通条件、模型参数凡未核实的，一律写“需核实”，并告诉用户去哪里核实（README 工具地址总表）。
@@ -142,6 +142,7 @@ iconUrl: https://raw.githubusercontent.com/yiten5885-a11y/ppt-animation-agent/ma
 8. **合规红线（底座第 10 节，每次输出前先过）：** 图片、字体、视频素材先确认许可再用；数据先确认来源再写；不确定的表述宁可删掉，不要冒险留着。
 9. **稳稿底座只写方法与契约：** 稳稿 PPT（wengao-ppt）当前标明“开发候选/未验证”，26 种语言真实端到端 0/26，50 套真实生成 0/50，包里只写方法与契约，不宣称已验证的效果。
 10. **纯文字页不许交付：** 内容页没有视觉元素的，先回模块 F 配图；封面没有图的，先补封面图。验收器重读成品文件核对：每页 p:pic、chart、示意图组的数量，缺图的页列出来修，修完重新质检。
+11. **版式防呆四条（星澜教训，2026-11-15 实修）：** 深底浅字、浅底深字，标题/副标题/页脚/行标签逐页核对字色与底色；无字占位形状（空白芯片、空白卡片、空白条）一律删掉，不许留着；装饰形（圆、色块、线条）不许盖住文字；卡片左侧装饰竖条收进卡片内，不顶圆角边；甘特条带季度文字，光秃秃的色块不算表达内容。做法见模块 C 第四节 4.5、模块 D 第六节、模块 E 视觉必检。
 
 ## 素材与字体注意事项
 
@@ -154,6 +155,8 @@ iconUrl: https://raw.githubusercontent.com/yiten5885-a11y/ppt-animation-agent/ma
 
 - 稿子定了吗？没定先回模块 A。
 - 每页内容页至少 1 组动画了吗？每页至少 1 个视觉元素了吗？封面有图了吗？纯文字页清零了吗？
+- 动画是自动连播吗？翻到一页不用点就自己播了吗？全页点击触发的页清零了吗？
+- 对比度、空白占位、装饰盖字、竖条内收、甘特条带字，五项都查了吗？
 - 全 deck 至少 1 种切换了吗？
 - 在 PowerPoint 或 WPS 里实际放映检查过了吗？
 - 质检清单（模块 E 第五节）三组都打勾了吗？
@@ -162,7 +165,8 @@ iconUrl: https://raw.githubusercontent.com/yiten5885-a11y/ppt-animation-agent/ma
 
 ## 版本与更新
 
-- 本包当前版本 v1.2.0，版本号写在 README 标题里。
+- 本包当前版本 v1.3.0，版本号写在 README 标题里。
+- v1.3.0（2026-11-15）：自动播放＋版式防呆。用户验收反馈：24 页讲义动画全是点击触发、放映时不点就不动；星澜 26 页年会报告标题深色字压深底看不见、22 页空白芯片、卡片竖条伸出卡片外、青色圆盖住感谢语、甘特图光秃秃没内容。改动：动画默认自动连播（模块 B 新增 1.6，p:timing 触发方式映射表：第一组 withPrevious、其余 afterEffect 错峰，全 clickEffect 验收不通过；模块 B 验收门与模块 E 动画必检加自动播放必检），版式防呆四条进硬规则 11（模块 C 新增 4.5，模块 D 甘特条带字，模块 E 视觉必检加四项）；讲义文件本身未动，改自动播放只动了技能包。
 - v1.2.0（2026-11-15）：折线图画线动画。用户要求：折线从一端动画式延长到另一端。改动：模块 D 第六节新增 6.2（擦除，自左侧，按系列，全线 1–2 秒，拐点停顿，标签最后出），模块 B 新增 1.5 擦除画线小节，模块 F 图表动画加 cross-ref；擦除的 presetID 以实机导出核对为准（需核实）。
 - v1.1.0（2026-11-15）：新增模块 F 插图系统。用户验收反馈：24 页讲义零插图、画面空。改动：每页至少 1 个视觉元素、封面必须有图、结构示意图程序画（不用接 API）、视觉必检进质检清单；路线一、二、四加入 F，模板每种页型留好图位。
 - 每次改动先记在底座第 9 节，再升版本号，不要先升版本后补记录。
